@@ -14,7 +14,7 @@ var active = true;
 document.onkeydown = keyPress;
 document.onkeyup = keyRelease;
 //tlo
-var bkg = new createjs.Bitmap("gfx/mapa2.png");
+var bkg = new createjs.Bitmap("gfx/mapa.png");
 //maska do "latarki"
 var map = new createjs.Shape();
 //sprite
@@ -104,7 +104,16 @@ function tick(event) {
     //maska
     map.x = character.x-75;
     map.y = character.y-25;
-    console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
+    
+    //TEST
+//po kolorze sprawdzanie!!
+    var ctx = canvas.getContext("2d");
+    var imgd = ctx.getImageData(stage.mouseX, stage.mouseY, 1, 1);
+    var pix = imgd.data;
+    console.log(rgbToHex(pix[0],pix[1],pix[2]));
+
+
+    //console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
     stage.update(event);
 }
 //nacisniety
@@ -163,4 +172,11 @@ function keyRelease(e){
             sprite.gotoAndStop(7);
             break;
     }
+}
+//zmiena koloru z RGB na HEXADEXYMALA
+function rgbToHex(red, green, blue)
+{
+    var decColor = red + 256 * green + 65536 * blue;
+    var result = decColor.toString(16);
+    return "#"+result;
 }
