@@ -191,7 +191,7 @@ function getPixelColor(){
 }
 ///////////////////////////////////sprawdzanie czy mozemy sie przemieszczac w danych kierunkach
 function canGoUp(){
-    imgData = canvas.getContext("2d").getImageData(character.x, character.y, 1, 1);
+    imgData = canvas.getContext("2d").getImageData(character.x+2, character.y, 1, 1);
     pix = imgData.data;
     if(getPixelColor() == "#ffffff")
         return true;
@@ -200,7 +200,7 @@ function canGoUp(){
 
 }
 function canGoDown(){
-    imgData = canvas.getContext("2d").getImageData(character.x+2, character.y+20, 1, 1);
+    imgData = canvas.getContext("2d").getImageData(character.x+2, character.y+22, 1, 1);
     pix = imgData.data;
     if(getPixelColor() == "#ffffff")
         return true;
