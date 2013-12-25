@@ -39,7 +39,7 @@ function init() {
     background.y = 0;
 
     character.x = (canvas.width/2)-20;
-    character.y = (canvas.height/2)-13;
+    character.y = (canvas.height/2)-25;
 
 ///
 background.addChild(bkg);
@@ -73,11 +73,10 @@ stage.addChild(bmp);
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
-    imgData = canvas.getContext("2d").getImageData(character.x, character.y, 1, 1);
-    pix = imgData.data;
-
-    if(getPixelColor() == "#ffffff"){
+        imgData = canvas.getContext("2d").getImageData(character.x, character.y, 1, 1);
+        pix = imgData.data;
         if(up){
+            if(canGoUp())
             if(background.y<0 && character.y < (canvas.height/2)-13){
                 background.y+=3;
             }else{
@@ -85,13 +84,15 @@ function tick(event) {
                     character.y-=3;
             }        
         }else if(right){
-            if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10 ){
+            if(canGoRight())
+            if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10){
                 background.x-=3;
             }else{
                 if(character.x<canvas.width - 20)
                     character.x+=3;
             }
         }else if(left){
+            if(canGoLeft())
             if(background.x<0 && character.x < (canvas.width/2)-10){
                 background.x+=3;
             }else{
@@ -99,6 +100,7 @@ function tick(event) {
                     character.x-=3;
             }
         }else if(down){
+            if(canGoDown())
             if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
                 background.y-=3;
             }else{
@@ -113,10 +115,10 @@ map.y = character.y-25;
 //TEST
 //po kolorze sprawdzanie!!
 //    console.log(getPixelColor());
-}
 
 
-//console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
+
+console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y + "color: " + getPixelColor());
 stage.update(event);
 }
 //nacisniety
@@ -186,4 +188,41 @@ function rgbToHex(red, green, blue)
 //funkcja zwracajaca kolorek
 function getPixelColor(){
     return rgbToHex(pix[0],pix[1],pix[2])
+}
+///////////////////////////////////sprawdzanie czy mozemy sie przemieszczac w danych kierunkach
+function canGoUp(){
+    imgData = canvas.getContext("2d").getImageData(character.x, character.y, 1, 1);
+    pix = imgData.data;
+    if(getPixelColor() == "#ffffff")
+        return true;
+    else
+        return false;
+
+}
+function canGoDown(){
+    imgData = canvas.getContext("2d").getImageData(character.x+2, character.y+20, 1, 1);
+    pix = imgData.data;
+    if(getPixelColor() == "#ffffff")
+        return true;
+    else
+        return false;
+
+}
+function canGoLeft(){
+    imgData = canvas.getContext("2d").getImageData(character.x, character.y+2, 1, 2);
+    pix = imgData.data;
+    if(getPixelColor() == "#ffffff")
+        return true;
+    else
+        return false;
+    
+}
+function canGoRight(){
+    imgData = canvas.getContext("2d").getImageData(character.x+20, character.y+2, 1, 2);
+    pix = imgData.data;
+    if(getPixelColor() == "#ffffff")
+        return true;
+    else
+        return false;
+    
 }
