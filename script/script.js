@@ -1,4 +1,4 @@
-var stage, holder;
+var stage, character;
 var KEYCODE_UP = 38;                //usefull keycode
 var KEYCODE_LEFT = 37;                //usefull keycode
 var KEYCODE_RIGHT = 39;                //usefull keycode
@@ -13,23 +13,11 @@ var active = true;
 //listenery do ruszania straszlkami
 document.onkeydown = keyPress;
 document.onkeyup = keyRelease;
-//glowna funkcja rozruchowa
+//tlo
 var bkg = new createjs.Bitmap("gfx/mapa2.png");
-function init() {
-    stage = new createjs.Stage("canvas");            
-    background = stage.addChild(new createjs.Container());
-    background.x = 0;
-    background.y = 0;
-    holder = stage.addChild(new createjs.Container());
-
-    holder.x = (canvas.width/2)-20;
-    holder.y = (canvas.height/2)-13;
-
-    background.addChild(bkg);
-
-
-    createjs.Ticker.on("tick", tick);
-    createjs.Ticker.setFPS(30);
+//maska do "latarki"
+var map = new createjs.Shape();
+//sprite
     var ss = new createjs.SpriteSheet({
         "frames": {
             "width": 20,
@@ -41,6 +29,31 @@ function init() {
         "animations": {"up": [0, 2], "right":[3, 5], "down":[6, 8], "left":[9, 11]},
         "images": ["gfx/sprite2.png"]
     });
+//glowna funkcja rozruchowa
+function init() {
+    stage = new createjs.Stage("canvas");            
+    background = stage.addChild(new createjs.Container());
+    character = stage.addChild(new createjs.Container());
+    background.x = 0;
+    background.y = 0;
+
+    character.x = (canvas.width/2)-20;
+    character.y = (canvas.height/2)-13;
+
+///
+    background.addChild(bkg);
+//nowy shape = mapa do poruszania sie
+    map.graphics.drawRect(0, 0, 100, 50);
+    map.x = map.y = 0;
+
+    //background.mask = map;                            //////maska!!!
+
+    stage.addChild(map);
+
+
+
+    createjs.Ticker.on("tick", tick);
+    createjs.Ticker.setFPS(30);
 
     ss.getAnimation("up").speed = 0.5;
     ss.getAnimation("right").speed = 0.5;
@@ -50,40 +63,48 @@ function init() {
     sprite = new createjs.Sprite(ss);
     sprite.scaleY = sprite.scaleX = 1;
     sprite.gotoAndStop(7);
-    holder.addChild(sprite);
+    character.addChild(sprite);
+
+
+    //
+    bmp = new createjs.Bitmap(canvas);
+    stage.addChild(bmp);
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
     if(up){
-        if(background.y<0 && holder.y < (canvas.height/2)-13){
+        if(background.y<0 && character.y < (canvas.height/2)-13){
             background.y+=3;
         }else{
-            if(holder.y>0)
-                holder.y-=3;
+            if(character.y>0)
+                character.y-=3;
         }        
     }else if(right){
-        if(background.x > canvas.width-bkg.image.width && holder.x > (canvas.width/2)-10 ){
+        if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10 ){
             background.x-=3;
         }else{
-            if(holder.x<canvas.width - 20)
-                holder.x+=3;
+            if(character.x<canvas.width - 20)
+                character.x+=3;
         }
     }else if(left){
-        if(background.x<0 && holder.x < (canvas.width/2)-10){
+        if(background.x<0 && character.x < (canvas.width/2)-10){
             background.x+=3;
         }else{
-            if(holder.x>0)
-                holder.x-=3;
+            if(character.x>0)
+                character.x-=3;
         }
     }else if(down){
-        if(background.y>canvas.height - bkg.image.height && holder.y > (canvas.height/2)-13){
+        if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
             background.y-=3;
         }else{
-            if(holder.y<canvas.height - 26)
-                holder.y+=3;
+            if(character.y<canvas.height - 26)
+                character.y+=3;
         }
     }
-    console.log("x " + background.x + ", y " + background.y + " hX: " + holder.x + " hY " + holder.y);
+    //maska
+    map.x = character.x-75;
+    map.y = character.y-25;
+    console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
     stage.update(event);
 }
 //nacisniety
