@@ -1,9 +1,9 @@
 var stage, character, imgData;
 var pix = [];
-var KEYCODE_UP = 38;                //usefull keycode
-var KEYCODE_LEFT = 37;                //usefull keycode
-var KEYCODE_RIGHT = 39;                //usefull keycode
-var KEYCODE_DOWN = 40;                //usefull keycode
+var KEYCODE_UP = 38;                
+var KEYCODE_LEFT = 37;                
+var KEYCODE_RIGHT = 39;                
+var KEYCODE_DOWN = 40;                
 //kierunki
 var right = false;
 var up = false;
@@ -44,7 +44,7 @@ function init() {
 ///
 background.addChild(bkg);
 //nowy shape = mapa do poruszania sie
-map.graphics.drawRect(0, 0, 100, 50);
+map.graphics.drawRect(0, 0, 100, 100);
 map.x = map.y = 0;
 
 //background.mask = map;                            //////maska!!!
@@ -73,10 +73,8 @@ stage.addChild(bmp);
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
-        imgData = canvas.getContext("2d").getImageData(character.x, character.y, 1, 1);
-        pix = imgData.data;
-        if(up){
-            if(canGoUp())
+    if(up){
+        if(canGoUp())   
             if(background.y<0 && character.y < (canvas.height/2)-13){
                 background.y+=3;
             }else{
@@ -85,40 +83,34 @@ function tick(event) {
             }        
         }else if(right){
             if(canGoRight())
-            if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10){
-                background.x-=3;
-            }else{
-                if(character.x<canvas.width - 20)
-                    character.x+=3;
-            }
-        }else if(left){
-            if(canGoLeft())
-            if(background.x<0 && character.x < (canvas.width/2)-10){
-                background.x+=3;
-            }else{
-                if(character.x>0)
-                    character.x-=3;
-            }
-        }else if(down){
-            if(canGoDown())
-            if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
-                background.y-=3;
-            }else{
-                if(character.y<canvas.height - 26)
-                    character.y+=3;
-            }
-        }
+                if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10){
+                    background.x-=3;
+                }else{
+                    if(character.x<canvas.width - 20)
+                        character.x+=3;
+                }
+            }else if(left){
+                if(canGoLeft())
+                    if(background.x<0 && character.x < (canvas.width/2)-10){
+                        background.x+=3;
+                    }else{
+                        if(character.x>0)
+                            character.x-=3;
+                    }
+                }else if(down){
+                    if(canGoDown())
+                        if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
+                            background.y-=3;
+                        }else{
+                            if(character.y<canvas.height - 26)
+                                character.y+=3;
+                        }
+                    }
 //maska
-map.x = character.x-75;
+map.x = character.x-50;
 map.y = character.y-25;
 
-//TEST
-//po kolorze sprawdzanie!!
-//    console.log(getPixelColor());
-
-
-
-console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y + "color: " + getPixelColor());
+//console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
 stage.update(event);
 }
 //nacisniety
@@ -209,20 +201,20 @@ function canGoDown(){
 
 }
 function canGoLeft(){
-    imgData = canvas.getContext("2d").getImageData(character.x, character.y+2, 1, 2);
+    imgData = canvas.getContext("2d").getImageData(character.x, character.y+18, 1, 1);
     pix = imgData.data;
     if(getPixelColor() == "#ffffff")
         return true;
     else
         return false;
-    
+
 }
 function canGoRight(){
-    imgData = canvas.getContext("2d").getImageData(character.x+20, character.y+2, 1, 2);
+    imgData = canvas.getContext("2d").getImageData(character.x+20, character.y+18, 1, 1);
     pix = imgData.data;
     if(getPixelColor() == "#ffffff")
         return true;
     else
         return false;
-    
+
 }
