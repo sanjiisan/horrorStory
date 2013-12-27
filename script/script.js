@@ -30,6 +30,17 @@ var ss = new createjs.SpriteSheet({
     "animations": {"up": [0, 2], "right":[3, 5], "down":[6, 8], "left":[9, 11]},
     "images": ["gfx/sprite2.png"]
 });
+//wylaczenie scrolowania strzalkami
+var arrow_keys_handler = function(e) {
+    switch(e.keyCode){
+        case 37: case 39: case 38:  case 40: // Arrow keys
+        case 32: e.preventDefault(); break; // Space
+        default: break; // do not block other keys
+    }
+};
+window.addEventListener("keydown", arrow_keys_handler, false);
+//wlaczenie scrolowania
+//window.removeEventListener("keydown", arrow_keys_handler, false);
 //glowna funkcja rozruchowa
 function init() {
     stage = new createjs.Stage("canvas");            
@@ -47,7 +58,7 @@ background.addChild(bkg);
 map.graphics.drawRect(0, 0, 100, 100);
 map.x = map.y = 0;
 
-//background.mask = map;                            //////maska!!!
+background.mask = map;                            //////maska!!!
 
 stage.addChild(map);
 
@@ -74,38 +85,42 @@ stage.addChild(bmp);
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
     if(up){
-        if(canGoUp())   
+        if(canGoUp()){   
             if(background.y<0 && character.y < (canvas.height/2)-13){
                 background.y+=3;
             }else{
                 if(character.y>0)
                     character.y-=3;
             }        
-        }else if(right){
-            if(canGoRight())
-                if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10){
-                    background.x-=3;
-                }else{
-                    if(character.x<canvas.width - 20)
-                        character.x+=3;
-                }
-            }else if(left){
-                if(canGoLeft())
-                    if(background.x<0 && character.x < (canvas.width/2)-10){
-                        background.x+=3;
-                    }else{
-                        if(character.x>0)
-                            character.x-=3;
-                    }
-                }else if(down){
-                    if(canGoDown())
-                        if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
-                            background.y-=3;
-                        }else{
-                            if(character.y<canvas.height - 26)
-                                character.y+=3;
-                        }
-                    }
+        }
+    }else if(right){
+        if(canGoRight()){
+            if(background.x > canvas.width-bkg.image.width && character.x > (canvas.width/2)-10){
+                background.x-=3;
+            }else{
+                if(character.x<canvas.width - 20)
+                    character.x+=3;
+            }
+        }
+    }else if(left){
+        if(canGoLeft()){
+            if(background.x<0 && character.x < (canvas.width/2)-10){
+                background.x+=3;
+            }else{
+                if(character.x>0)
+                    character.x-=3;
+            }
+        }
+    }else if(down){
+        if(canGoDown()){
+            if(background.y>canvas.height - bkg.image.height && character.y > (canvas.height/2)-13){
+                background.y-=3;
+            }else{
+                if(character.y<canvas.height - 26)
+                    character.y+=3;
+            }
+        }
+    }
 //maska
 map.x = character.x-50;
 map.y = character.y-25;
@@ -116,30 +131,38 @@ stage.update(event);
 //nacisniety
 function keyPress(e){
     if(!e)
-        var e = window.event; 
+        var e = window.event;     
     switch(e.keyCode) {
         case KEYCODE_RIGHT:      
         right = true; 
-        if(active)
+        if(active){
             sprite.gotoAndPlay("right");
+            $("#info").append(e.keyCode + ", next: ");
+        }
         active = false;
         break;
         case KEYCODE_UP:
         up = true;
-        if(active)
+        if(active){
             sprite.gotoAndPlay("up");
+            $("#info").append(e.keyCode + ", next: ");
+        }
         active = false;
         break;
         case KEYCODE_LEFT:
         left = true;
-        if(active)
+        if(active){
             sprite.gotoAndPlay("left");
+            $("#info").append(e.keyCode + ", next: ");
+        }
         active = false;
         break;
         case KEYCODE_DOWN:
         down = true;
-        if(active)
+        if(active){
             sprite.gotoAndPlay("down");
+            $("#info").append(e.keyCode + ", next: ");
+        }
         active = false;
         break;
     }
@@ -192,7 +215,7 @@ function canGoUp(){
 
 }
 function canGoDown(){
-    imgData = canvas.getContext("2d").getImageData(character.x+2, character.y+22, 1, 1);
+    imgData = canvas.getContext("2d").getImageData(character.x+16, character.y+22, 1, 1);
     pix = imgData.data;
     if(getPixelColor() == "#ffffff")
         return true;
