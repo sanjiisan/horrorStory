@@ -1,6 +1,18 @@
+body{
+	background-color: #fbbacc;
+}
 canvas{
-	border:1px solid black;
 	margin: 0 auto;
 	display: block;
 	background-color: #000;
+}
+#playerSelect{
+	height: 50px;
+	width: 200px;
+	text-align: center;
+	line-height: 50px;
+	border:1px solid black;
+	margin: 0 auto;
+	display: block;
+	background-color: #bba;	
 }

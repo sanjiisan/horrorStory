@@ -5,8 +5,7 @@ var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;                
 var KEYCODE_DOWN = 40;                
 //gracze
-var player = "alien";
-var player2;
+var player, player2;
 //kierunki
 var right = false;
 var up = false;
@@ -42,7 +41,7 @@ var alienSprite = new createjs.SpriteSheet({
         "height": 26
     },
     "animations": {"down": [0, 2], "left":[3, 5], "right":[6, 8], "up":[9, 11]},
-    "images": ["gfx/sprite3.png"]
+    "images": ["gfx/sprite2.png"]
 });
 //wylaczenie scrolowania strzalkami
 var arrow_keys_handler = function(e) {
@@ -55,12 +54,33 @@ default: break; // do not block other keys
 window.addEventListener("keydown", arrow_keys_handler, false);
 //wlaczenie scrolowania
 //window.removeEventListener("keydown", arrow_keys_handler, false);
-//glowna funkcja rozruchowa///////////////////////////////////////////////////////////////////
-jQuery(document).ready(function($) {
-    selectPlayer();
-});
+//glowna funkcja rozruchowa----------------------------------////////////////////////////////////--------------INIT()---------------!!!!!!!!!!!!!!!!!!!!
 function init() {
-    stage = new createjs.Stage("canvas");            
+        stage = new createjs.Stage("canvas");  
+        selectPlayer();          
+        background = stage.addChild(new createjs.Container());
+        character = stage.addChild(new createjs.Container());
+        background.addChild(bkg);
+            //narysowana maska
+        map.graphics.drawRect(0, 0, 100, 100);
+        //background.mask = map;                            //////maska!!!
+        stage.addChild(map);
+            //sprite czlowieka
+        peopleSprite.getAnimation("up").speed = 0.5;
+        peopleSprite.getAnimation("right").speed = 0.5;
+        peopleSprite.getAnimation("down").speed = 0.5;
+        peopleSprite.getAnimation("left").speed = 0.5;
+        pSprite = new createjs.Sprite(peopleSprite);
+        pSprite.scaleY = pSprite.scaleX = 1;
+        pSprite.gotoAndStop(7);
+          //sprite aliena
+        alienSprite.getAnimation("up").speed = 0.5;
+        alienSprite.getAnimation("right").speed = 0.5;
+        alienSprite.getAnimation("down").speed = 0.5;
+        alienSprite.getAnimation("left").speed = 0.5;
+        aSprite = new createjs.Sprite(alienSprite);
+        aSprite.scaleY = aSprite.scaleX = 1;
+        aSprite.gotoAndStop(7);
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
@@ -104,7 +124,6 @@ function tick(event) {
 //maska
 map.x = character.x-50;
 map.y = character.y-25;
-
 //console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
 stage.update(event);
 }
@@ -116,7 +135,10 @@ function keyPress(e){
         case KEYCODE_RIGHT:      
         right = true; 
         if(active){
-            pSprite.gotoAndPlay("right");
+            if(player == "people")
+                pSprite.gotoAndPlay("right");
+            else
+                aSprite.gotoAndPlay("right");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -124,7 +146,10 @@ function keyPress(e){
         case KEYCODE_UP:
         up = true;
         if(active){
-            pSprite.gotoAndPlay("up");
+            if(player == "people")
+                pSprite.gotoAndPlay("up");
+            else
+                aSprite.gotoAndPlay("up");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -132,7 +157,10 @@ function keyPress(e){
         case KEYCODE_LEFT:
         left = true;
         if(active){
-            pSprite.gotoAndPlay("left");
+            if(player == "people")
+                pSprite.gotoAndPlay("left");
+            else
+                aSprite.gotoAndPlay("left");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -140,7 +168,10 @@ function keyPress(e){
         case KEYCODE_DOWN:
         down = true;
         if(active){
-            pSprite.gotoAndPlay("down");
+            if(player == "people")
+                pSprite.gotoAndPlay("down");
+            else
+                aSprite.gotoAndPlay("down");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -154,22 +185,34 @@ function keyRelease(e){
         case KEYCODE_RIGHT:      
         right = false;
         active = true;
-        pSprite.gotoAndStop(4);
+        if(player == "people")
+            pSprite.gotoAndStop(4);
+        else
+            aSprite.gotoAndStop(4);
         break;
         case KEYCODE_UP:        
         up = false;
         active = true;
-        pSprite.gotoAndStop(1);
+        if(player == "people")
+            pSprite.gotoAndStop(1);
+        else
+            aSprite.gotoAndStop(1);
         break;
         case KEYCODE_LEFT:       
         left = false;
         active = true;
-        pSprite.gotoAndStop(10);
+        if(player == "people")
+            pSprite.gotoAndStop(10);
+        else
+            aSprite.gotoAndStop(10);
         break;
         case KEYCODE_DOWN:       
         down = false;
         active = true;
-        pSprite.gotoAndStop(7);
+        if(player == "people")
+            pSprite.gotoAndStop(7);
+        else
+            aSprite.gotoAndStop(7);
         break;
     }
 }
@@ -234,54 +277,25 @@ function selectPlayer(){
         $(this).parent().empty();
     });
     $("#alien").parent().click(function(event) {
-        background = stage.addChild(new createjs.Container());
-        character = stage.addChild(new createjs.Container());
-        ///
-        background.addChild(bkg);
-        //nowy shape = mapa do poruszania sie
-        map.graphics.drawRect(0, 0, 100, 100);
-
-        //background.mask = map;                            //////maska!!!
-        stage.addChild(map);
-
         createjs.Ticker.on("tick", tick);
         createjs.Ticker.setFPS(30);
-
-        //sprite czlowieka
-        peopleSprite.getAnimation("up").speed = 0.5;
-        peopleSprite.getAnimation("right").speed = 0.5;
-        peopleSprite.getAnimation("down").speed = 0.5;
-        peopleSprite.getAnimation("left").speed = 0.5;
-        pSprite = new createjs.Sprite(peopleSprite);
-        pSprite.scaleY = pSprite.scaleX = 1;
-        pSprite.gotoAndStop(7);
-        //sprite aliena
-        alienSprite.getAnimation("up").speed = 0.5;
-        alienSprite.getAnimation("right").speed = 0.5;
-        alienSprite.getAnimation("down").speed = 0.5;
-        alienSprite.getAnimation("left").speed = 0.5;
-        aSprite = new createjs.Sprite(alienSprite);
-        aSprite.scaleY = aSprite.scaleX = 0.6;
-        aSprite.gotoAndStop(1);
-        //zaraz///////////////////////////////////////////////////////////////////////
         if(player == "people"){
-            //console.log("people");
             character.addChild(pSprite);
-            background.x = -100;
+            background.x = -60;
             background.y = 0;
             character.x = (canvas.width/2)-20;
             character.y = (canvas.height/2)-25;
-            aSprite.x = 100;
-            aSprite.y = 100;
+            aSprite.x = 1100;
+            aSprite.y = 60;
             background.addChild(aSprite);   
         }else{
             character.addChild(aSprite);
-            background.x = -100;
+            background.x = -60;
             background.y = 0;
             character.x = (canvas.width/2)-20;
             character.y = (canvas.height/2)-25;
-            pSprite.x = 100;
-            pSprite.y = 100;
+            pSprite.x = 1100;
+            pSprite.y = 60;
             background.addChild(pSprite);
         }
     });
