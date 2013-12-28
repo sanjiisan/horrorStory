@@ -266,18 +266,37 @@ function canGoRight(){
 }
 //wybor gracza, ustawieni zmienncyh
 function selectPlayer(){
-    $("#people").click(function(event) {
-        player = "people";
-        player2 = "alien";
-        $(this).parent().empty();
+    $.ajax({
+        url: 'ajax/checkStart.php',
+        type: 'POST',
+    })
+    .done(function(message) {
+        if(message == "alien"){
+            player = "alien";
+            player2 = "people";
+            gameBegin();
+        }else if(message == "people"){
+            player = "people";
+            player2 = "alien";
+            gameBegin();
+        }else{
+            $("#people").click(function(event) {
+                 player = "people";
+                 player2 = "alien";
+                  $(this).parent().empty();
+                  gameBegin();
+             });
+            $("#alien").click(function(event) {
+                player2 = "people";
+                player = "alien";
+                $(this).parent().empty();
+                gameBegin();
+            });
+        }
     });
-    $("#alien").click(function(event) {
-        player2 = "people";
-        player = "alien";
-        $(this).parent().empty();
-    });
-    $("#alien").parent().click(function(event) {
-        createjs.Ticker.on("tick", tick);
+}
+function gameBegin(){
+    createjs.Ticker.on("tick", tick);
         createjs.Ticker.setFPS(30);
         if(player == "people"){
             character.addChild(pSprite);
@@ -298,5 +317,11 @@ function selectPlayer(){
             pSprite.y = 60;
             background.addChild(pSprite);
         }
-    });
+                //start gry
+            $.ajax({
+                url: 'ajax/startGame.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {player: player},
+            });  
 }
