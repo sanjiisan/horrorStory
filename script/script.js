@@ -4,6 +4,8 @@ var KEYCODE_UP = 38;
 var KEYCODE_LEFT = 37;                
 var KEYCODE_RIGHT = 39;                
 var KEYCODE_DOWN = 40;                
+//gracze
+var player,player2;
 //kierunki
 var right = false;
 var up = false;
@@ -18,8 +20,8 @@ document.onkeyup = keyRelease;
 var bkg = new createjs.Bitmap("gfx/mapa.png");
 //maska do "latarki"
 var map = new createjs.Shape();
-//sprite'y
-var peopleSS = new createjs.SpriteSheet({
+//sprite
+var peopleSprite = new createjs.SpriteSheet({
     "frames": {
         "width": 20,
         "numFrames": 9,
@@ -30,7 +32,7 @@ var peopleSS = new createjs.SpriteSheet({
     "animations": {"up": [0, 2], "right":[3, 5], "down":[6, 8], "left":[9, 11]},
     "images": ["gfx/sprite2.png"]
 });
-var beastSS = new createjs.SpriteSheet({
+var alienSprite = new createjs.SpriteSheet({
     "frames": {
         "width": 20,
         "numFrames": 9,
@@ -41,7 +43,6 @@ var beastSS = new createjs.SpriteSheet({
     "animations": {"down": [0, 2], "left":[3, 5], "right":[6, 8], "up":[9, 11]},
     "images": ["gfx/sprite3.png"]
 });
-
 //wylaczenie scrolowania strzalkami
 var arrow_keys_handler = function(e) {
     switch(e.keyCode){
@@ -55,57 +56,38 @@ window.addEventListener("keydown", arrow_keys_handler, false);
 //window.removeEventListener("keydown", arrow_keys_handler, false);
 //glowna funkcja rozruchowa
 function init() {
+    selectPlayer();
     stage = new createjs.Stage("canvas");            
     background = stage.addChild(new createjs.Container());
     character = stage.addChild(new createjs.Container());
-    alien = stage.addChild(new createjs.Container());
     background.x = -100;
     background.y = 0;
 
     character.x = (canvas.width/2)-20;
     character.y = (canvas.height/2)-25;
-    alien.x = 0;
-    alien.y = 0;
 
 ///
 background.addChild(bkg);
 //nowy shape = mapa do poruszania sie
 map.graphics.drawRect(0, 0, 100, 100);
-map.x = map.y = 0;
 
 //background.mask = map;                            //////maska!!!
-
 stage.addChild(map);
-
-
 
 createjs.Ticker.on("tick", tick);
 createjs.Ticker.setFPS(30);
 
-peopleSS.getAnimation("up").speed = 0.5;
-peopleSS.getAnimation("right").speed = 0.5;
-peopleSS.getAnimation("down").speed = 0.5;
-peopleSS.getAnimation("left").speed = 0.5;
+peopleSprite.getAnimation("up").speed = 0.5;
+peopleSprite.getAnimation("right").speed = 0.5;
+peopleSprite.getAnimation("down").speed = 0.5;
+peopleSprite.getAnimation("left").speed = 0.5;
 
-beastSS.getAnimation("up").speed = 0.5;
-beastSS.getAnimation("right").speed = 0.5;
-beastSS.getAnimation("down").speed = 0.5;
-beastSS.getAnimation("left").speed = 0.5;
-
-
-sprite = new createjs.Sprite(peopleSS);
-sprite2 = new createjs.Sprite(beastSS);
+sprite = new createjs.Sprite(peopleSprite);
 sprite.scaleY = sprite.scaleX = 1;
-sprite2.scaleY = sprite2.scaleX = 1;
 sprite.gotoAndStop(7);
-sprite2.gotoAndStop(7);
 character.addChild(sprite);
-alien.addChild(sprite2);
 
 
-//
-bmp = new createjs.Bitmap(canvas);
-stage.addChild(bmp);
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
@@ -265,4 +247,17 @@ function canGoRight(){
     else
         return false;
 
+}
+//wybor gracza, ustawieni zmienncyh
+function selectPlayer(){
+    $("#people").click(function(event) {
+        player = "people";
+        player2 = "alien";
+        $(this).parent().empty();
+    });
+    $("#alien").click(function(event) {
+        player2 = "people";
+        player = "alien";
+        $(this).parent().empty();
+    });
 }
