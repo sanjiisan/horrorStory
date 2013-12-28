@@ -184,6 +184,7 @@ function keyPress(e){
 }
 //spuszczony klawisz
 function keyRelease(e){
+    cancelMove();
     if(!e){ var e = window.event; }
     switch(e.keyCode) {
         case KEYCODE_RIGHT:      
@@ -337,15 +338,11 @@ function sendMove(direction){
         type: 'POST',
         dataType: 'json',
         data: {dir: direction},
-    })
-    .done(function() {
-        console.log("success");
-    })
-    .fail(function() {
-        console.log("error");
-    })
-    .always(function() {
-        console.log("complete");
     });
-    
+}
+function cancelMove(){
+    $.ajax({
+        url: 'ajax/endMove.php',
+        type: 'POST',
+    });
 }
