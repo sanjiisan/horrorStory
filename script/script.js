@@ -18,8 +18,8 @@ document.onkeyup = keyRelease;
 var bkg = new createjs.Bitmap("gfx/mapa.png");
 //maska do "latarki"
 var map = new createjs.Shape();
-//sprite
-var ss = new createjs.SpriteSheet({
+//sprite'y
+var peopleSS = new createjs.SpriteSheet({
     "frames": {
         "width": 20,
         "numFrames": 9,
@@ -30,6 +30,18 @@ var ss = new createjs.SpriteSheet({
     "animations": {"up": [0, 2], "right":[3, 5], "down":[6, 8], "left":[9, 11]},
     "images": ["gfx/sprite2.png"]
 });
+var beastSS = new createjs.SpriteSheet({
+    "frames": {
+        "width": 20,
+        "numFrames": 9,
+        "regX": 0,
+        "regY": 0,
+        "height": 26
+    },
+    "animations": {"down": [0, 2], "left":[3, 5], "right":[6, 8], "up":[9, 11]},
+    "images": ["gfx/sprite3.png"]
+});
+
 //wylaczenie scrolowania strzalkami
 var arrow_keys_handler = function(e) {
     switch(e.keyCode){
@@ -46,11 +58,14 @@ function init() {
     stage = new createjs.Stage("canvas");            
     background = stage.addChild(new createjs.Container());
     character = stage.addChild(new createjs.Container());
+    alien = stage.addChild(new createjs.Container());
     background.x = -100;
     background.y = 0;
 
     character.x = (canvas.width/2)-20;
     character.y = (canvas.height/2)-25;
+    alien.x = 0;
+    alien.y = 0;
 
 ///
 background.addChild(bkg);
@@ -58,7 +73,7 @@ background.addChild(bkg);
 map.graphics.drawRect(0, 0, 100, 100);
 map.x = map.y = 0;
 
-background.mask = map;                            //////maska!!!
+//background.mask = map;                            //////maska!!!
 
 stage.addChild(map);
 
@@ -67,15 +82,25 @@ stage.addChild(map);
 createjs.Ticker.on("tick", tick);
 createjs.Ticker.setFPS(30);
 
-ss.getAnimation("up").speed = 0.5;
-ss.getAnimation("right").speed = 0.5;
-ss.getAnimation("down").speed = 0.5;
-ss.getAnimation("left").speed = 0.5;
+peopleSS.getAnimation("up").speed = 0.5;
+peopleSS.getAnimation("right").speed = 0.5;
+peopleSS.getAnimation("down").speed = 0.5;
+peopleSS.getAnimation("left").speed = 0.5;
 
-sprite = new createjs.Sprite(ss);
+beastSS.getAnimation("up").speed = 0.5;
+beastSS.getAnimation("right").speed = 0.5;
+beastSS.getAnimation("down").speed = 0.5;
+beastSS.getAnimation("left").speed = 0.5;
+
+
+sprite = new createjs.Sprite(peopleSS);
+sprite2 = new createjs.Sprite(beastSS);
 sprite.scaleY = sprite.scaleX = 1;
+sprite2.scaleY = sprite2.scaleX = 1;
 sprite.gotoAndStop(7);
+sprite2.gotoAndStop(7);
 character.addChild(sprite);
+alien.addChild(sprite2);
 
 
 //
