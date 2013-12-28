@@ -135,6 +135,7 @@ function keyPress(e){
         case KEYCODE_RIGHT:      
         right = true; 
         if(active){
+            sendMove("right");
             if(player == "people")
                 pSprite.gotoAndPlay("right");
             else
@@ -146,6 +147,7 @@ function keyPress(e){
         case KEYCODE_UP:
         up = true;
         if(active){
+        sendMove("up");
             if(player == "people")
                 pSprite.gotoAndPlay("up");
             else
@@ -157,6 +159,7 @@ function keyPress(e){
         case KEYCODE_LEFT:
         left = true;
         if(active){
+        sendMove("left");
             if(player == "people")
                 pSprite.gotoAndPlay("left");
             else
@@ -168,6 +171,7 @@ function keyPress(e){
         case KEYCODE_DOWN:
         down = true;
         if(active){
+        sendMove("right");
             if(player == "people")
                 pSprite.gotoAndPlay("down");
             else
@@ -264,36 +268,38 @@ function canGoRight(){
         return false;
 
 }
+
+//
 //wybor gracza, ustawieni zmienncyh
 function selectPlayer(){
-    $.ajax({
+        $.ajax({
         url: 'ajax/checkStart.php',
         type: 'POST',
-    })
-    .done(function(message) {
-        if(message == "alien"){
-            player = "alien";
-            player2 = "people";
-            gameBegin();
-        }else if(message == "people"){
-            player = "people";
-            player2 = "alien";
-            gameBegin();
-        }else{
-            $("#people").click(function(event) {
-                 player = "people";
-                 player2 = "alien";
-                  $(this).parent().empty();
-                  gameBegin();
-             });
-            $("#alien").click(function(event) {
-                player2 = "people";
-                player = "alien";
-                $(this).parent().empty();
+        })
+        .done(function(message) {
+            if(message == "alien"){
+                player = "people";
+                player2 = "alien";
                 gameBegin();
-            });
-        }
-    });
+            }else if(message == "people"){
+                player = "alien";
+                player2 = "people";
+                gameBegin();
+            }else{
+                $("#people").click(function(event) {
+                     player = "people";
+                     player2 = "alien";
+                      $(this).parent().empty();
+                      gameBegin();
+                 });
+                $("#alien").click(function(event) {
+                    player2 = "people";
+                    player = "alien";
+                    $(this).parent().empty();
+                    gameBegin();
+                });
+            }
+        });
 }
 function gameBegin(){
     createjs.Ticker.on("tick", tick);
@@ -324,4 +330,22 @@ function gameBegin(){
                 dataType: 'json',
                 data: {player: player},
             });  
+}
+function sendMove(direction){
+    $.ajax({
+        url: 'ajax/startMove.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {dir: direction},
+    })
+    .done(function() {
+        console.log("success");
+    })
+    .fail(function() {
+        console.log("error");
+    })
+    .always(function() {
+        console.log("complete");
+    });
+    
 }
