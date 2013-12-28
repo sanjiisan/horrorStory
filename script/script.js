@@ -13,6 +13,8 @@ var left = false;
 var down = false;
 //czy idziemy - zmienna zeby ruch sie odtwarzal tylko 1 raz
 var active = true;
+//ruch oponenta
+var opponentMove = "";
 //listenery do ruszania straszlkami
 document.onkeydown = keyPress;
 document.onkeyup = keyRelease;
@@ -84,6 +86,16 @@ function init() {
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
+
+    if(opponentMove == "right")
+        aSprite.x+=3;
+    else if(opponentMove == "left")
+        aSprite.x-=3;
+    else if(opponentMove == "up")
+        aSprite.y-=3;
+    else if(opponentMove == "down")
+        aSprite.y+=3;
+
     if(up){
         if(canGoUp()){   
             if(background.y<0 && character.y < (canvas.height/2)-13){
@@ -171,7 +183,7 @@ function keyPress(e){
         case KEYCODE_DOWN:
         down = true;
         if(active){
-        sendMove("right");
+        sendMove("down");
             if(player == "people")
                 pSprite.gotoAndPlay("down");
             else
@@ -292,45 +304,52 @@ function selectPlayer(){
                      player2 = "alien";
                       $(this).parent().empty();
                       gameBegin();
+                      $.ajax({
+                url: 'ajax/startGame.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {player: player},
+            });  
                  });
                 $("#alien").click(function(event) {
                     player2 = "people";
                     player = "alien";
                     $(this).parent().empty();
                     gameBegin();
-                });
-            }
-        });
-}
-function gameBegin(){
-    createjs.Ticker.on("tick", tick);
-        createjs.Ticker.setFPS(30);
-        if(player == "people"){
-            character.addChild(pSprite);
-            background.x = -60;
-            background.y = 0;
-            character.x = (canvas.width/2)-20;
-            character.y = (canvas.height/2)-25;
-            aSprite.x = 1100;
-            aSprite.y = 60;
-            background.addChild(aSprite);   
-        }else{
-            character.addChild(aSprite);
-            background.x = -60;
-            background.y = 0;
-            character.x = (canvas.width/2)-20;
-            character.y = (canvas.height/2)-25;
-            pSprite.x = 1100;
-            pSprite.y = 60;
-            background.addChild(pSprite);
-        }
-                //start gry
-            $.ajax({
+                    $.ajax({
                 url: 'ajax/startGame.php',
                 type: 'POST',
                 dataType: 'json',
                 data: {player: player},
             });  
+                });
+            }
+        });
+}
+///
+function gameBegin(){
+    createjs.Ticker.on("tick", tick);
+        createjs.Ticker.setFPS(30);
+        if(player == "people"){
+            character.addChild(pSprite);
+            background.x = -501;
+            background.y = 0;
+            character.x = 600;
+            character.y = 60;
+            aSprite.x = 545;
+            aSprite.y = (canvas.height/2)-25;
+            background.addChild(aSprite);   
+        }else{
+            character.addChild(aSprite);
+            background.x = -60;
+            background.y = 0;
+            character.x = (canvas.width/2)-20; //480
+            character.y = (canvas.height/2)-25;
+            pSprite.x = 1100;
+            pSprite.y = 60;
+            background.addChild(pSprite);
+        }            
+            poll();
 }
 function sendMove(direction){
     $.ajax({
@@ -345,4 +364,29 @@ function cancelMove(){
         url: 'ajax/endMove.php',
         type: 'POST',
     });
+}
+//POOLING DO RUSZANIA KURWA
+function poll(){
+               /* $.ajax({
+                    type: "POST",
+                    url: "ajax/poll.php",
+                    dataType: 'json',
+                    data: {move: opponentMove},
+                    success: function(data){                    
+                        console.log(data);
+                        opponentMove = data;
+                    },
+                    complete: poll
+                });*/
+                $.ajax({
+                    url: 'ajax/poll.php',
+                    type: 'POST',
+                    data: {move: opponentMove},
+                    complete: poll,
+                })
+                .done(function(data) {
+                    console.log("zmienilo sie " + data);
+                    opponentMove = data;
+                });
+                
 }
