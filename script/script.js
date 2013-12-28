@@ -5,7 +5,8 @@ var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;                
 var KEYCODE_DOWN = 40;                
 //gracze
-var player,player2;
+var player = "alien";
+var player2;
 //kierunki
 var right = false;
 var up = false;
@@ -46,48 +47,20 @@ var alienSprite = new createjs.SpriteSheet({
 //wylaczenie scrolowania strzalkami
 var arrow_keys_handler = function(e) {
     switch(e.keyCode){
-        case 37: case 39: case 38:  case 40: // Arrow keys
-        case 32: e.preventDefault(); break; // Space
-        default: break; // do not block other keys
-    }
+case 37: case 39: case 38:  case 40: // Arrow keys
+case 32: e.preventDefault(); break; // Space
+default: break; // do not block other keys
+}
 };
 window.addEventListener("keydown", arrow_keys_handler, false);
 //wlaczenie scrolowania
 //window.removeEventListener("keydown", arrow_keys_handler, false);
-//glowna funkcja rozruchowa
-function init() {
+//glowna funkcja rozruchowa///////////////////////////////////////////////////////////////////
+jQuery(document).ready(function($) {
     selectPlayer();
+});
+function init() {
     stage = new createjs.Stage("canvas");            
-    background = stage.addChild(new createjs.Container());
-    character = stage.addChild(new createjs.Container());
-    background.x = -100;
-    background.y = 0;
-
-    character.x = (canvas.width/2)-20;
-    character.y = (canvas.height/2)-25;
-
-///
-background.addChild(bkg);
-//nowy shape = mapa do poruszania sie
-map.graphics.drawRect(0, 0, 100, 100);
-
-//background.mask = map;                            //////maska!!!
-stage.addChild(map);
-
-createjs.Ticker.on("tick", tick);
-createjs.Ticker.setFPS(30);
-
-peopleSprite.getAnimation("up").speed = 0.5;
-peopleSprite.getAnimation("right").speed = 0.5;
-peopleSprite.getAnimation("down").speed = 0.5;
-peopleSprite.getAnimation("left").speed = 0.5;
-
-sprite = new createjs.Sprite(peopleSprite);
-sprite.scaleY = sprite.scaleX = 1;
-sprite.gotoAndStop(7);
-character.addChild(sprite);
-
-
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
@@ -143,7 +116,7 @@ function keyPress(e){
         case KEYCODE_RIGHT:      
         right = true; 
         if(active){
-            sprite.gotoAndPlay("right");
+            pSprite.gotoAndPlay("right");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -151,7 +124,7 @@ function keyPress(e){
         case KEYCODE_UP:
         up = true;
         if(active){
-            sprite.gotoAndPlay("up");
+            pSprite.gotoAndPlay("up");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -159,7 +132,7 @@ function keyPress(e){
         case KEYCODE_LEFT:
         left = true;
         if(active){
-            sprite.gotoAndPlay("left");
+            pSprite.gotoAndPlay("left");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -167,7 +140,7 @@ function keyPress(e){
         case KEYCODE_DOWN:
         down = true;
         if(active){
-            sprite.gotoAndPlay("down");
+            pSprite.gotoAndPlay("down");
             $("#info").append(e.keyCode + ", next: ");
         }
         active = false;
@@ -181,22 +154,22 @@ function keyRelease(e){
         case KEYCODE_RIGHT:      
         right = false;
         active = true;
-        sprite.gotoAndStop(4);
+        pSprite.gotoAndStop(4);
         break;
         case KEYCODE_UP:        
         up = false;
         active = true;
-        sprite.gotoAndStop(1);
+        pSprite.gotoAndStop(1);
         break;
         case KEYCODE_LEFT:       
         left = false;
         active = true;
-        sprite.gotoAndStop(10);
+        pSprite.gotoAndStop(10);
         break;
         case KEYCODE_DOWN:       
         down = false;
         active = true;
-        sprite.gotoAndStop(7);
+        pSprite.gotoAndStop(7);
         break;
     }
 }
@@ -259,5 +232,57 @@ function selectPlayer(){
         player2 = "people";
         player = "alien";
         $(this).parent().empty();
+    });
+    $("#alien").parent().click(function(event) {
+        background = stage.addChild(new createjs.Container());
+        character = stage.addChild(new createjs.Container());
+        ///
+        background.addChild(bkg);
+        //nowy shape = mapa do poruszania sie
+        map.graphics.drawRect(0, 0, 100, 100);
+
+        //background.mask = map;                            //////maska!!!
+        stage.addChild(map);
+
+        createjs.Ticker.on("tick", tick);
+        createjs.Ticker.setFPS(30);
+
+        //sprite czlowieka
+        peopleSprite.getAnimation("up").speed = 0.5;
+        peopleSprite.getAnimation("right").speed = 0.5;
+        peopleSprite.getAnimation("down").speed = 0.5;
+        peopleSprite.getAnimation("left").speed = 0.5;
+        pSprite = new createjs.Sprite(peopleSprite);
+        pSprite.scaleY = pSprite.scaleX = 1;
+        pSprite.gotoAndStop(7);
+        //sprite aliena
+        alienSprite.getAnimation("up").speed = 0.5;
+        alienSprite.getAnimation("right").speed = 0.5;
+        alienSprite.getAnimation("down").speed = 0.5;
+        alienSprite.getAnimation("left").speed = 0.5;
+        aSprite = new createjs.Sprite(alienSprite);
+        aSprite.scaleY = aSprite.scaleX = 0.6;
+        aSprite.gotoAndStop(1);
+        //zaraz///////////////////////////////////////////////////////////////////////
+        if(player == "people"){
+            //console.log("people");
+            character.addChild(pSprite);
+            background.x = -100;
+            background.y = 0;
+            character.x = (canvas.width/2)-20;
+            character.y = (canvas.height/2)-25;
+            aSprite.x = 100;
+            aSprite.y = 100;
+            background.addChild(aSprite);   
+        }else{
+            character.addChild(aSprite);
+            background.x = -100;
+            background.y = 0;
+            character.x = (canvas.width/2)-20;
+            character.y = (canvas.height/2)-25;
+            pSprite.x = 100;
+            pSprite.y = 100;
+            background.addChild(pSprite);
+        }
     });
 }
