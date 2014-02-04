@@ -86,7 +86,7 @@ function init() {
 }
 //ENTERFRAME odwzorowanie tylko ze w JS
 function tick(event) {
-
+/*
     if(opponentMove == "right")
         aSprite.x+=3;
     else if(opponentMove == "left")
@@ -95,7 +95,7 @@ function tick(event) {
         aSprite.y-=3;
     else if(opponentMove == "down")
         aSprite.y+=3;
-
+*/
     if(up){
         if(canGoUp()){   
             if(background.y<0 && character.y < (canvas.height/2)-13){
@@ -133,11 +133,11 @@ function tick(event) {
             }
         }
     }
-//maska
-map.x = character.x-50;
-map.y = character.y-25;
-//console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
-stage.update(event);
+    //maska
+    map.x = character.x-50;
+    map.y = character.y-25;
+    //console.log("x " + background.x + ", y " + background.y + " hX: " + character.x + " hY " + character.y);
+    stage.update(event);
 }
 //nacisniety
 function keyPress(e){
@@ -349,7 +349,7 @@ function gameBegin(){
             pSprite.y = 60;
             background.addChild(pSprite);
         }            
-            poll();
+            //poll();
 }
 function sendMove(direction){
     $.ajax({
@@ -359,7 +359,7 @@ function sendMove(direction){
         data: {dir: direction},
     });
 }
-function cancelMove(){
+/*function cancelMove(){
     $.ajax({
         url: 'ajax/endMove.php',
         type: 'POST',
@@ -367,7 +367,7 @@ function cancelMove(){
 }
 //POOLING DO RUSZANIA KURWA
 function poll(){
-               /* $.ajax({
+                $.ajax({
                     type: "POST",
                     url: "ajax/poll.php",
                     dataType: 'json',
@@ -377,7 +377,7 @@ function poll(){
                         opponentMove = data;
                     },
                     complete: poll
-                });*/
+                });
                 $.ajax({
                     url: 'ajax/poll.php',
                     type: 'POST',
@@ -389,4 +389,4 @@ function poll(){
                     opponentMove = data;
                 });
                 
-}
+}*/
