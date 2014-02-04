@@ -58,7 +58,7 @@ background.addChild(bkg);
 map.graphics.drawRect(0, 0, 100, 100);
 map.x = map.y = 0;
 
-background.mask = map;                            //////maska!!!
+//background.mask = map;                            //////maska!!!
 
 stage.addChild(map);
 
